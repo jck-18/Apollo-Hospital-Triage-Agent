@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apollo HQ — Triage Command Center</title>
+  <meta name="description" content="Apollo Hospitals Federated AI Triage Command Center" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<div class="app-container">
+  
+  <!-- ── SIDEBAR NAVIGATION ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="pulse-dot"></div>
+      <div class="brand-text">
+        <span class="brand-name">Apollo HQ</span>
+        <span class="brand-sub">Federated Core</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-target="view-overview">
+        <span class="nav-icon">🌐</span> HQ Overview
+      </a>
+      <a href="#" class="nav-item" data-target="view-network">
+        <span class="nav-icon">🏥</span> Network Nodes
+      </a>
+      <a href="#" class="nav-item" data-target="view-triage">
+        <span class="nav-icon">🧠</span> Triage AI Agent
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <span class="status-indicator"></span>
+        <span id="system-status-text">Connecting...</span>
+      </div>
+      <div class="round-counter">
+        Fed Round: <strong id="round-num">—</strong>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT AREA ── -->
+  <main class="main-content">
+    
+    <!-- ── VIEW 1: HQ OVERVIEW ── -->
+    <section id="view-overview" class="view-section active">
+      <header class="view-header">
+        <h1>Global Brain Overview</h1>
+        <p>Monitor federated nodes and push weight-sync iterations to improve the centralized model.</p>
+      </header>
+
+      <div class="global-bar glass-card">
+        <div class="global-bar-left">
+          <span class="label-tag fed-tag">Global Aggregation Model</span>
+          <span class="global-acc-value" id="global-acc">—</span>
+          <span class="global-acc-label">Validation Accuracy</span>
+        </div>
+        <div class="global-bar-right metrics-row" style="margin:0; gap:1rem;">
+          <div class="metric-box">
+             <span class="metric-val" id="global-f1">—</span>
+             <span class="metric-key">F1 Score</span>
+          </div>
+          <div class="metric-box">
+             <span class="metric-val" id="met-rec">—</span>
+             <span class="metric-key">Recall</span>
+          </div>
+          <div class="metric-box">
+             <span class="metric-val" id="met-prec">—</span>
+             <span class="metric-key">Precision</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="orchestrator-layout">
+        <!-- Orchestrator Diagram -->
+        <div class="fed-diagram glass-card">
+          <span class="label-tag">Federated Orchestrator</span>
+          <div class="nodes-row">
+            <div class="node-pill" id="node-A">Branch A</div>
+            <div class="node-pill" id="node-B">Branch B</div>
+            <div class="node-pill" id="node-C">Branch C</div>
+          </div>
+          <div class="arrows-row" id="arrows-row">
+            <div class="arrow-line"></div>
+            <div class="arrow-line"></div>
+            <div class="arrow-line"></div>
+          </div>
+          <div class="server-node" id="server-node">
+            <div class="server-icon">🖥️</div>
+            <div>HQ Server<br/><small>FedAvg Core</small></div>
+          </div>
+          <button class="sync-btn" id="sync-btn" onclick="triggerFederatedSync()">
+            <span class="sync-icon">⚡</span> <span id="sync-label">Run Federated Sync</span>
+          </button>
+        </div>
+
+        <!-- Accuracy Chart -->
+        <div class="chart-card glass-card">
+          <div class="chart-header">
+            <span class="label-tag">Global Accuracy Progression</span>
+          </div>
+          <div class="chart-container-relative">
+            <canvas id="accuracy-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 2: NETWORK NODES ── -->
+    <section id="view-network" class="view-section">
+      <header class="view-header">
+        <h1>Network Telemetry</h1>
+        <p>Analyze isolated performance and demographic biases of individual hospital silos before aggregation.</p>
+      </header>
+      
+      <div class="silo-grid-large" id="silo-grid">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- ── VIEW 3: TRIAGE AI ── -->
+    <section id="view-triage" class="view-section">
+      <header class="view-header">
+        <h1>NLP Triage Terminal</h1>
+        <p>Deploy the global model. Enter unstructured patient notes to automatically extract vitals and predict urgency.</p>
+      </header>
+
+      <div class="triage-grid">
+        <!-- Left: Input & Vitals -->
+        <div class="triage-left">
+          <div class="agent-input-panel glass-card">
+            <div class="chat-area">
+              <label for="nlp-input">Clinical Notes / Patient Description:</label>
+              <textarea id="nlp-input" rows="6" placeholder="e.g. 55 year old male came in with high fever of 39.1, severe coughing and shortness of breath..."></textarea>
+            </div>
+            <div class="agent-actions">
+              <button class="action-btn primary-btn" onclick="runNLPAgent()">
+                <span id="nlp-label">🔍 Extract & Diagnose</span>
+              </button>
+              <button class="action-btn ghost-btn" onclick="clearAgent()">Reset</button>
+            </div>
+          </div>
+
+          <div class="vitals-panel glass-card" id="vitals-panel" style="display:none;">
+            <span class="label-tag">Extracted Vitals (NLP)</span>
+            <div class="vitals-grid" id="vitals-grid"></div>
+          </div>
+        </div>
+
+        <!-- Right: Results & XAI -->
+        <div class="triage-right">
+          <!-- Initial Empty State -->
+          <div class="empty-state glass-card" id="triage-empty">
+            <span class="empty-icon">⌨️</span>
+            <p>Awaiting Patient Data</p>
+          </div>
+
+          <!-- Result Panel -->
+          <div class="result-flow-layout" id="result-flow-layout" style="display:none;">
+            <div class="result-panel glass-card">
+              <div class="result-header">
+                <span class="label-tag">Global Triage Result</span>
+              </div>
+              
+              <div class="result-urgency" id="result-urgency-box">
+                <span id="result-urgency-label">—</span>
+                <span class="result-confidence" id="result-confidence">—</span>
+              </div>
+
+              <div class="xai-section">
+                <span class="label-tag xai-tag">🔬 Explainable AI (XAI) Factors</span>
+                <div class="chart-container-relative-xai">
+                  <canvas id="xai-chart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comparison -->
+            <div class="comparison-card glass-card" style="margin-top: 1.5rem;">
+              <span class="label-tag" style="background:rgba(239, 68, 68, 0.2); color:var(--danger)">Federated Edge</span>
+              <p class="comparison-hint">Local hospital variants exhibit lower confidence due to limited demographic exposure. Global model stabilizes predictions.</p>
+              <div class="comparison-grid" id="comparison-grid"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
