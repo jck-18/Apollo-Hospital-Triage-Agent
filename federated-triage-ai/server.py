@@ -39,9 +39,9 @@ load_dotenv()
 
 # ── AI API Config (Gemini + OpenAI) ──────────────────────────────────────────
 openai_client = None
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-if OPENAI_API_KEY:
-    openai_client = OpenAI(api_key=OPENAI_API_KEY)
+API_KEY = os.environ.get("API_KEY", "")
+if API_KEY:
+    openai_client = OpenAI(api_key=API_KEY)
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 if GEMINI_API_KEY:
@@ -288,13 +288,13 @@ Return ONLY the JSON object, no explanation."""
             response_format={"type": "json_object"}
         )
         raw = response.choices[0].message.content.strip()
-    elif GEMINI_API_KEY:
+    #elif GEMINI_API_KEY:
         # Use Gemini fallback
         model_nlp = genai.GenerativeModel("gemini-2.0-flash")
         response = model_nlp.generate_content(prompt)
         raw = response.text.strip()
-    else:
-        raise HTTPException(status_code=400, detail="No AI API key (OpenAI or Gemini) configured.")
+   # else:
+    #    raise HTTPException(status_code=400, detail="No AI API key (OpenAI or Gemini) configured.")
 
     # Strip markdown code fences if present
     raw = re.sub(r"```(?:json)?", "", raw).strip().strip("`").strip()
